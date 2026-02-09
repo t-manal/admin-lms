@@ -42,9 +42,8 @@ class ApiClient {
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: API_BASE_URL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // REMOVED: Global Content-Type header (breaks FormData)
+      // Content-Type is now set conditionally in the request interceptor
       withCredentials: true,
     });
 
@@ -54,6 +53,18 @@ class ApiClient {
   private setupInterceptors() {
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        // CRITICAL FIX: Set Content-Type conditionally
+        // Only set application/json if the payload is NOT FormData
+        // This allows Axios to auto-set multipart/form-data for file uploads
+        if (config.data instanceof FormData) {
+          // Let Axios handle Content-Type automatically for FormData
+          // It will set: multipart/form-data; boundary=...
+          // DO NOT set Content-Type here
+        } else if (config.headers && !config.headers['Content-Type']) {
+          // Default to JSON for non-FormData requests
+          config.headers['Content-Type'] = 'application/json';
+        }
+
         if (this.accessToken && config.headers) {
           config.headers.Authorization = `Bearer ${this.accessToken}`;
         }
