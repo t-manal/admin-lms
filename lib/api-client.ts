@@ -147,6 +147,15 @@ class ApiClient {
     this.accessToken = null;
   }
 
+  public resetRefreshState() {
+    this.isRefreshFailed = false;
+    this.isRefreshing = false;
+  }
+
+  public markRefreshFailed() {
+    this.isRefreshFailed = true;
+  }
+
   public getToken(): string | null {
     return this.accessToken;
   }
