@@ -75,6 +75,18 @@ export const catalogApi = {
         return apiClient.post<University>('/catalog/universities', data);
     },
 
+    deleteUniversity: async (universityId: string) => {
+        return apiClient.delete<{
+            universityId: string;
+            universityName: string;
+            deleted: {
+                courses: number;
+                enrollments: number;
+                paymentRecords: number;
+            };
+        }>(`/catalog/universities/${universityId}`);
+    },
+
     createMajor: async (data: { name: string; universityId: string }) => {
         return apiClient.post<Major>('/catalog/majors', data);
     },

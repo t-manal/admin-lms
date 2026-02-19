@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChevronRight, LayoutGrid } from 'lucide-react';
+import { ChevronRight, LayoutGrid, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface CatalogCardProps {
@@ -15,6 +15,8 @@ interface CatalogCardProps {
     count?: number | string;
     countLabel?: string;
     onManage?: () => void;
+    onDelete?: () => void;
+    isDeleting?: boolean;
     icon?: React.ReactNode;
 }
 
@@ -26,6 +28,8 @@ export function CatalogCard({
     count,
     countLabel,
     onManage,
+    onDelete,
+    isDeleting = false,
     icon
 }: CatalogCardProps) {
     const tCommon = useTranslations('common');
@@ -69,7 +73,19 @@ export function CatalogCard({
                     </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end border-t border-slate-100 dark:border-white/5 pt-3">
+                <div className="mt-4 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-white/5 pt-3">
+                    {onDelete && (
+                        <Button
+                            onClick={onDelete}
+                            variant="ghost"
+                            size="sm"
+                            disabled={isDeleting}
+                            className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10 font-bold transition-all px-3 text-xs uppercase tracking-wider"
+                        >
+                            <Trash2 className="me-1 h-3.5 w-3.5" />
+                            {isDeleting ? tCommon('loading') : tCommon('delete')}
+                        </Button>
+                    )}
                     <Button
                         onClick={onManage}
                         variant="ghost"

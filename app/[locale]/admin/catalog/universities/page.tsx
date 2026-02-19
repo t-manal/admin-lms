@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, GraduationCap, Search, ChevronRight } from 'lucide-react';
+import { Plus, GraduationCap, Search } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,21 @@ const universitySchema = z.object({
 
 type UniversityFormValues = z.infer<typeof universitySchema>;
 
+function getErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === 'object' && error !== null) {
+        const maybeError = error as any;
+        const apiMessage = maybeError?.response?.data?.message;
+        if (typeof apiMessage === 'string' && apiMessage.trim().length > 0) {
+            return apiMessage;
+        }
+        if (typeof maybeError?.message === 'string' && maybeError.message.trim().length > 0) {
+            return maybeError.message;
+        }
+    }
+
+    return fallback;
+}
+
 export default function UniversitiesPage() {
     const t = useTranslations('admin.catalog');
     const tCommon = useTranslations('common');
@@ -57,6 +72,7 @@ export default function UniversitiesPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deletingUniversityId, setDeletingUniversityId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -87,7 +103,7 @@ export default function UniversitiesPage() {
     const onSubmit = async (values: UniversityFormValues) => {
         setIsSubmitting(true);
         try {
-            // 1. Create University with name and an empty logo initially
+            // 1. Create university first
             const apiResponse = await catalogApi.createUniversity({
                 name: values.name,
                 logo: "" // Initially empty
@@ -95,21 +111,66 @@ export default function UniversitiesPage() {
             
             const newUniversity = apiResponse as unknown as University;
             const newId = newUniversity?.id;
+            let logoUploadFailed = false;
 
-            // 2. Upload Logo if selected, using the new university's ID
+            // 2. Upload logo in a separate error boundary so create success is not masked
             if (newId && selectedFile) {
-                await catalogApi.uploadUniversityLogo(newId, selectedFile);
+                try {
+                    await catalogApi.uploadUniversityLogo(newId, selectedFile);
+                } catch {
+                    logoUploadFailed = true;
+                }
             }
 
-            toast.success(tCommon('create'));
+            if (logoUploadFailed) {
+                toast.warning(
+                    locale === 'ar'
+                        ? 'تم إنشاء الجامعة، لكن فشل رفع الشعار.'
+                        : 'University was created, but logo upload failed.'
+                );
+            } else {
+                toast.success(tCommon('create'));
+            }
+
             form.reset();
             setSelectedFile(null); // Reset file
             setIsDialogOpen(false);
             fetchUniversities();
         } catch (error) {
-            toast.error('Failed to create university.');
+            toast.error(
+                getErrorMessage(
+                    error,
+                    locale === 'ar' ? 'فشل إنشاء الجامعة.' : 'Failed to create university.'
+                )
+            );
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteUniversity = async (university: University) => {
+        const confirmMessage = locale === 'ar'
+            ? `هل أنت متأكد من حذف جامعة "${university.name}" وكل ما يرتبط بها؟ لا يمكن التراجع عن هذا الإجراء.`
+            : `Are you sure you want to delete "${university.name}" and all related data? This action cannot be undone.`;
+
+        if (!window.confirm(confirmMessage)) {
+            return;
+        }
+
+        setDeletingUniversityId(university.id);
+        try {
+            await catalogApi.deleteUniversity(university.id);
+            toast.success(locale === 'ar' ? 'تم حذف الجامعة بنجاح.' : 'University deleted successfully.');
+            await fetchUniversities();
+        } catch (error) {
+            toast.error(
+                getErrorMessage(
+                    error,
+                    locale === 'ar' ? 'فشل حذف الجامعة.' : 'Failed to delete university.'
+                )
+            );
+        } finally {
+            setDeletingUniversityId(null);
         }
     };
 
@@ -273,7 +334,8 @@ export default function UniversitiesPage() {
                             key={uni.id}
                             title={uni.name}
                             image={uni.logo}
-
+                            onDelete={() => handleDeleteUniversity(uni)}
+                            isDeleting={deletingUniversityId === uni.id}
                             onManage={() => router.push(`/${locale}/admin/catalog/universities/${uni.id}`)}
                             icon={<GraduationCap className="h-8 w-8 text-primary/60" />}
                         />
