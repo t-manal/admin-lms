@@ -35,6 +35,8 @@ export interface Course {
     thumbnail?: string;
     price: number;
     isPublished: boolean;
+    universityId?: string;
+    university?: University;
     subjectId: string;
     subject?: Subject;
     _count?: {

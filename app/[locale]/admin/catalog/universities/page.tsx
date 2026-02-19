@@ -16,6 +16,16 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
@@ -73,6 +83,7 @@ export default function UniversitiesPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingUniversityId, setDeletingUniversityId] = useState<string | null>(null);
+    const [universityToDelete, setUniversityToDelete] = useState<University | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -149,14 +160,6 @@ export default function UniversitiesPage() {
     };
 
     const handleDeleteUniversity = async (university: University) => {
-        const confirmMessage = locale === 'ar'
-            ? `هل أنت متأكد من حذف جامعة "${university.name}" وكل ما يرتبط بها؟ لا يمكن التراجع عن هذا الإجراء.`
-            : `Are you sure you want to delete "${university.name}" and all related data? This action cannot be undone.`;
-
-        if (!window.confirm(confirmMessage)) {
-            return;
-        }
-
         setDeletingUniversityId(university.id);
         try {
             await catalogApi.deleteUniversity(university.id);
@@ -171,6 +174,7 @@ export default function UniversitiesPage() {
             );
         } finally {
             setDeletingUniversityId(null);
+            setUniversityToDelete(null);
         }
     };
 
@@ -334,7 +338,7 @@ export default function UniversitiesPage() {
                             key={uni.id}
                             title={uni.name}
                             image={uni.logo}
-                            onDelete={() => handleDeleteUniversity(uni)}
+                            onDelete={() => setUniversityToDelete(uni)}
                             isDeleting={deletingUniversityId === uni.id}
                             onManage={() => router.push(`/${locale}/admin/catalog/universities/${uni.id}`)}
                             icon={<GraduationCap className="h-8 w-8 text-primary/60" />}
@@ -342,6 +346,38 @@ export default function UniversitiesPage() {
                     ))
                 )}
             </div>
+
+            <AlertDialog open={!!universityToDelete} onOpenChange={(open) => !open && setUniversityToDelete(null)}>
+                <AlertDialogContent className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-xl font-black text-slate-900 dark:text-white">
+                            {locale === 'ar' ? 'تأكيد حذف الجامعة' : 'Confirm University Deletion'}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                            {locale === 'ar'
+                                ? `سيتم حذف "${universityToDelete?.name || ''}" وكل البيانات المرتبطة بها (الدورات، التسجيلات، وسجلات الدفع). لا يمكن التراجع عن هذا الإجراء.`
+                                : `This will permanently delete "${universityToDelete?.name || ''}" and all related data (courses, enrollments, and payment records). This action cannot be undone.`}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="rounded-xl">
+                            {tCommon('cancel')}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            disabled={!!deletingUniversityId}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (universityToDelete) {
+                                    handleDeleteUniversity(universityToDelete);
+                                }
+                            }}
+                        >
+                            {deletingUniversityId ? tCommon('loading') : tCommon('delete')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
