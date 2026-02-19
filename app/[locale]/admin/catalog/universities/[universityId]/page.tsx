@@ -26,6 +26,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { catalogApi } from '@/lib/api/catalog';
 import { instructorApi } from '@/lib/api/instructor';
+import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
 import { CatalogCard } from '@/components/admin/catalog/CatalogCard';
 import { CatalogCardSkeleton } from '@/components/admin/catalog/CatalogSkeleton';
@@ -348,7 +349,7 @@ export default function UniversityDetailPage() {
                             <CatalogCard
                                 key={course.id}
                                 title={course.title}
-                                count={course.isFree ? t('free') : `$${course.price}`}
+                                count={course.isFree ? t('free') : formatPrice(Number(course.price))}
                                 countLabel={course.instructor ? `${course.instructor.firstName} ${course.instructor.lastName}` : t('instructor')}
                                 onManage={() => router.push(`/${locale}/admin/courses/${course.id}`)}
                                 icon={<BookOpen className="h-8 w-8 text-primary/60" />}

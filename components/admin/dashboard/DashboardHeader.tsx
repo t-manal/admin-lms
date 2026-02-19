@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 
 interface DashboardHeaderProps {
     totalRevenue: number;
@@ -62,9 +63,8 @@ export function DashboardHeader({ totalRevenue, userName = "Admin" }: DashboardH
                     <span className="block text-slate-300 text-xs font-bold uppercase tracking-widest mb-1">
                         {t('totalRevenue', { defaultMessage: 'Total Revenue' })}
                     </span>
-                    <div className="text-4xl font-black text-amber-400 font-mono tracking-tight flex items-baseline gap-1">
-                        <span className="text-2xl text-amber-400/80">$</span>
-                        {displayRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <div className="text-4xl font-black text-amber-400 font-mono tracking-tight">
+                        {formatPrice(displayRevenue)}
                     </div>
                 </div>
             </div>

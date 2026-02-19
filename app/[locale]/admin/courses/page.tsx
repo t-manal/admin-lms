@@ -34,6 +34,7 @@ import { useTranslations } from 'next-intl';
 
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { formatPrice } from '@/lib/utils';
 import { CatalogCardSkeleton } from '@/components/admin/catalog/CatalogSkeleton';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -285,7 +286,7 @@ export default function CoursesPage() {
                                 </div>
                                 <div className="mt-auto pt-2 flex items-center justify-between">
                                     <Badge variant="outline" className="border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 font-bold text-xs px-2 py-0.5">
-                                        {course.price > 0 ? `$${course.price}` : "Free"}
+                                        {course.price > 0 ? formatPrice(course.price) : "Free"}
                                     </Badge>
                                 </div>
                             </CardContent>
@@ -307,3 +308,4 @@ export default function CoursesPage() {
         </div>
     );
 }
+

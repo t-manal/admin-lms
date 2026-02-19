@@ -173,7 +173,7 @@
                 "saving": "جاري الحفظ...",
                 "form": {
                     "title": "العنوان",
-                    "price": "السعر ($)",
+                    "price": "السعر (SAR)",
                     "description": "الوصف",
                     "descriptionPlaceholder": "اكتب وصفاً للدورة..."
                 }

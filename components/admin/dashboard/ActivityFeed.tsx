@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DollarSign, GraduationCap, AlertCircle, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { formatPrice } from '@/lib/utils';
 
 interface ActivityItem {
     id: string;
@@ -33,7 +34,7 @@ export function ActivityFeed({ payments, students }: ActivityFeedProps) {
             title: t('paymentReceived', { defaultMessage: 'Payment Received' }),
             subtitle: `${p.user?.firstName} ${p.user?.lastName} - ${p.course?.title}`,
             date: new Date(p.createdAt),
-            meta: `$${p.amount}`
+            meta: formatPrice(Number(p.amount))
         })),
         ...students.map(s => ({
             id: s.id,

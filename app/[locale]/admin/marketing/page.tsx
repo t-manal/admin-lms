@@ -12,8 +12,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, DollarSign, TrendingUp, Users, CreditCard } from 'lucide-react';
+import { Loader2, Banknote, TrendingUp, Users, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { formatPrice } from '@/lib/utils';
 
 export default function MarketingPage() {
     const [payments, setPayments] = useState<PaymentRecord[]>([]);
@@ -74,10 +75,10 @@ export default function MarketingPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <Banknote className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
+                        <div className="text-2xl font-bold">{formatPrice(stats.totalRevenue)}</div>
                         <p className="text-xs text-muted-foreground">+20.1% from last month</p>
                     </CardContent>
                 </Card>
@@ -152,7 +153,7 @@ export default function MarketingPage() {
                                             </TableCell>
                                             <TableCell className="max-w-[200px] truncate">{payment.course.title}</TableCell>
                                             <TableCell className="font-bold">
-                                                ${payment.amount.toFixed(2)}
+                                                {formatPrice(payment.amount)}
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant="outline" className={getStatusColor(payment.status)}>

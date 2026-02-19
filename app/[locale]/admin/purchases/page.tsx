@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financeApi } from '@/lib/api/finance';
 import { Loader2, CheckCircle, Clock, User, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice } from '@/lib/utils'; // Assuming this helper exists or I should mock it
+import { formatPrice } from '@/lib/utils';
 
 export default function PendingPurchasesPage() {
     const queryClient = useQueryClient();
@@ -72,7 +72,7 @@ export default function PendingPurchasesPage() {
                                 <div className="flex items-center gap-6">
                                     <div className="text-left">
                                         <div className="text-lg font-bold text-slate-900">
-                                            {enrollment.course.price ? `$${enrollment.course.price}` : 'مجاني'}
+                                            {enrollment.course.price ? formatPrice(Number(enrollment.course.price)) : 'مجاني'}
                                         </div>
                                         <div className="text-xs text-amber-600 font-medium">بانتظار التحقق</div>
                                     </div>
@@ -97,3 +97,4 @@ export default function PendingPurchasesPage() {
         </div>
     );
 }
+

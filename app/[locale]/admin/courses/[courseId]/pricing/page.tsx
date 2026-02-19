@@ -55,7 +55,7 @@ export default function CoursePricingPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex bg-muted rounded-md p-4 items-center">
-                        <span className="text-2xl font-bold mr-2">$</span>
+                        <span className="text-2xl font-bold mr-2">SAR</span>
                         <Input
                             type="number"
                             value={price}

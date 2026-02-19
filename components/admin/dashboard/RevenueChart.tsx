@@ -6,6 +6,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 import { PaymentRecord } from '@/lib/api/finance';
 import { useMemo } from 'react';
 import { format, subDays, startOfDay, isSameDay } from 'date-fns';
+import { formatPrice } from '@/lib/utils';
 
 interface RevenueChartProps {
     series: { date: string; amount: number }[];
@@ -92,7 +93,7 @@ export function RevenueChart({ series }: RevenueChartProps) {
                                         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                                     }}
                                     itemStyle={{ color: '#1e40af', fontWeight: 'bold' }}
-                                    formatter={(value: number) => [`$${value}`, 'Revenue']}
+                                    formatter={(value: number) => [formatPrice(value), 'Revenue']}
                                 />
                                 <Area
                                     type="monotone"

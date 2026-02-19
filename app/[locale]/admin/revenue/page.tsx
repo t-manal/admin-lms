@@ -3,7 +3,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { financeApi } from '@/lib/api/finance';
-import { Loader2, DollarSign, TrendingUp, BookOpen } from 'lucide-react';
+import { Loader2, Banknote, TrendingUp, BookOpen } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 
 export default function RevenuePage() {
     const { data: revenue, isLoading } = useQuery({
@@ -33,11 +34,11 @@ export default function RevenuePage() {
                 <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white shadow-xl shadow-indigo-100">
                     <div className="flex items-center gap-4 mb-4">
                         <div className="p-3 bg-white/10 rounded-xl">
-                            <DollarSign className="h-6 w-6 text-white" />
+                            <Banknote className="h-6 w-6 text-white" />
                         </div>
                         <div>
                             <p className="text-sm font-medium text-indigo-100">إجمالي الإيرادات (المحققة)</p>
-                            <h2 className="text-3xl font-black mt-1">${revenue.total}</h2>
+                            <h2 className="text-3xl font-black mt-1">{formatPrice(Number(revenue.total))}</h2>
                         </div>
                     </div>
                     <div className="items-center text-xs text-indigo-200 gap-1 bg-white/5 inline-flex px-2 py-1 rounded-lg">
@@ -69,7 +70,7 @@ export default function RevenuePage() {
                                     {item.title}
                                 </td>
                                 <td className="p-4 text-slate-600">{item.count} عملية بيع</td>
-                                <td className="p-4 pl-6 font-bold text-emerald-600">${item.amount}</td>
+                                <td className="p-4 pl-6 font-bold text-emerald-600">{formatPrice(Number(item.amount))}</td>
                             </tr>
                         ))}
                         {revenue.byCourse.length === 0 && (

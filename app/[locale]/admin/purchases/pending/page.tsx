@@ -34,6 +34,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, CheckCircle2, AlertCircle, User, Book, Landmark, CreditCard, Copy, Hash, History, Download, Edit2, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatPrice } from '@/lib/utils';
 import { format } from 'date-fns';
 
 export default function PendingPurchasesPage() {
@@ -269,7 +270,7 @@ export default function PendingPurchasesPage() {
                         <DollarSign className="h-4 w-4 text-emerald-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${totalReceived.toLocaleString()}</div>
+                        <div className="text-2xl font-bold">{formatPrice(totalReceived)}</div>
                         <p className="text-xs text-muted-foreground">{t('totalReceivedDesc')}</p>
                     </CardContent>
                 </Card>
@@ -279,7 +280,7 @@ export default function PendingPurchasesPage() {
                         <AlertCircle className="h-4 w-4 text-amber-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${totalOutstanding.toLocaleString()}</div>
+                        <div className="text-2xl font-bold">{formatPrice(totalOutstanding)}</div>
                         <p className="text-xs text-muted-foreground">{t('outstandingDesc')}</p>
                     </CardContent>
                 </Card>
@@ -354,8 +355,8 @@ export default function PendingPurchasesPage() {
                                                 </Badge>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="py-5 font-medium">${p.ledger?.price?.toLocaleString() ?? 0}</TableCell>
-                                        <TableCell className="py-5 font-bold text-amber-600">${p.ledger?.remaining?.toLocaleString() ?? 0}</TableCell>
+                                        <TableCell className="py-5 font-medium">{formatPrice(p.ledger?.price ?? 0)}</TableCell>
+                                        <TableCell className="py-5 font-bold text-amber-600">{formatPrice(p.ledger?.remaining ?? 0)}</TableCell>
                                         <TableCell className="py-5 text-muted-foreground font-medium text-xs">
                                             {format(new Date(p.enrolledAt), 'MMM d, yyyy HH:mm')}
                                         </TableCell>
@@ -444,16 +445,16 @@ export default function PendingPurchasesPage() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="py-5 font-medium text-muted-foreground">
-                                            ${enr.ledger.price.toLocaleString()}
+                                            {formatPrice(enr.ledger.price)}
                                         </TableCell>
                                         <TableCell className="py-5">
                                             <span className="font-bold text-emerald-600">
-                                                ${enr.ledger.paidAmount.toLocaleString()}
+                                                {formatPrice(enr.ledger.paidAmount)}
                                             </span>
                                         </TableCell>
                                         <TableCell className="py-5">
                                             <span className="font-bold text-amber-600">
-                                                ${enr.ledger.remaining.toLocaleString()}
+                                                {formatPrice(enr.ledger.remaining)}
                                             </span>
                                         </TableCell>
                                         <TableCell className="py-5">
@@ -508,11 +509,11 @@ export default function PendingPurchasesPage() {
                             />
                         </div>
                         <div className="text-sm text-muted-foreground text-right">
-                            Remaining: ${selectedEnrollment?.ledger.remaining.toLocaleString()}
+                            Remaining: {formatPrice(selectedEnrollment?.ledger.remaining ?? 0)}
                         </div>
                         {selectedEnrollment?.ledger.price === 0 && (
                             <div className="col-span-4 text-center p-2 bg-blue-50 text-blue-700 text-xs rounded-lg mt-2 font-medium">
-                                This is a free course ($0). Confirm with $0 to grant access.
+                                This is a free course (SAR 0). Confirm with SAR 0 to grant access.
                             </div>
                         )}
                     </div>
@@ -544,15 +545,15 @@ export default function PendingPurchasesPage() {
                         <div className="grid grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
                              <div>
                                 <p className="text-xs text-muted-foreground font-bold uppercase">Price</p>
-                                <p className="text-lg font-bold">${editingEnrollment?.ledger.price.toLocaleString()}</p>
+                                <p className="text-lg font-bold">{formatPrice(editingEnrollment?.ledger.price ?? 0)}</p>
                              </div>
                              <div>
                                 <p className="text-xs text-muted-foreground font-bold uppercase">Paid</p>
-                                <p className="text-lg font-bold text-emerald-600">${editingEnrollment?.ledger.paidAmount.toLocaleString()}</p>
+                                <p className="text-lg font-bold text-emerald-600">{formatPrice(editingEnrollment?.ledger.paidAmount ?? 0)}</p>
                              </div>
                              <div>
                                 <p className="text-xs text-muted-foreground font-bold uppercase">Remaining</p>
-                                <p className="text-lg font-bold text-amber-600">${editingEnrollment?.ledger.remaining.toLocaleString()}</p>
+                                <p className="text-lg font-bold text-amber-600">{formatPrice(editingEnrollment?.ledger.remaining ?? 0)}</p>
                              </div>
                         </div>
 
@@ -563,7 +564,7 @@ export default function PendingPurchasesPage() {
                                  {editingEnrollment?.paymentRecords?.map(p => (
                                      <div key={p.id} className="flex items-center justify-between p-3 border rounded-lg bg-card text-sm">
                                          <div>
-                                             <p className="font-bold">${Number(p.amount).toLocaleString()}</p>
+                                             <p className="font-bold">{formatPrice(Number(p.amount))}</p>
                                              <p className="text-xs text-muted-foreground">{format(new Date(p.createdAt), 'MMM d, yyyy')}</p>
                                          </div>
                                           <div>
@@ -588,7 +589,7 @@ export default function PendingPurchasesPage() {
                             </h4>
                             {editingEnrollment?.ledger.price === 0 && (
                                 <div className="text-center p-2 bg-blue-50 text-blue-700 text-xs rounded-lg mb-2 font-medium">
-                                    Free Course: Only $0 adjustments allowed.
+                                    Free Course: Only SAR 0 adjustments allowed.
                                 </div>
                             )}
                             <div className="flex gap-3 items-end">
@@ -624,3 +625,4 @@ export default function PendingPurchasesPage() {
         </div>
     );
 }
+
