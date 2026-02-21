@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, BookOpen, MoreVertical, Loader2, Sparkles } from 'lucide-react';
+import { Plus, Search, BookOpen, MoreVertical, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -33,7 +33,6 @@ import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { CatalogCardSkeleton } from '@/components/admin/catalog/CatalogSkeleton';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -54,7 +53,6 @@ export default function CoursesPage() {
 
     // Creation Form State
     const [selectedUniId, setSelectedUniId] = useState('');
-    const [selectedSubjectId, setSelectedSubjectId] = useState(''); // Optional now
     const [newCourseTitle, setNewCourseTitle] = useState('');
 
     // Handle URL Params for pre-filling
@@ -81,23 +79,10 @@ export default function CoursesPage() {
         staleTime: 10 * 60 * 1000,
     });
 
-    const { data: majors = [] } = useQuery({
-        queryKey: ['majors', selectedUniId],
-        queryFn: () => catalogApi.getMajors(selectedUniId),
-        enabled: !!selectedUniId,
-    });
-
-    const { data: subjects = [] } = useQuery({
-        queryKey: ['subjects', selectedUniId],
-        queryFn: () => catalogApi.getSubjectsByUniversity(selectedUniId),
-        enabled: !!selectedUniId,
-    });
-
     const createMutation = useMutation({
         mutationFn: async () => {
             return instructorApi.createCourse({
                 title: newCourseTitle,
-                subjectId: selectedSubjectId || undefined,
                 universityId: selectedUniId || undefined,
             });
         },
@@ -121,7 +106,6 @@ export default function CoursesPage() {
 
     const handleUniChange = (val: string) => {
         setSelectedUniId(val);
-        setSelectedSubjectId('');
     };
 
     const filteredCourses = courses.filter(c =>
@@ -191,27 +175,6 @@ export default function CoursesPage() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label className="text-slate-900 dark:text-slate-200 font-bold text-xs uppercase tracking-widest">{tCatalog('addSubject')} (Optional)</Label>
-                                            <Select onValueChange={setSelectedSubjectId} value={selectedSubjectId} disabled={!selectedUniId}>
-                                                <SelectTrigger className="rounded-xl h-12 border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-base font-medium">
-                                                    <SelectValue placeholder={tCatalog('addSubject')} />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-xl border-none shadow-2xl max-h-[200px]">
-                                                    <SelectItem value="none" className="text-muted-foreground italic">None</SelectItem>
-                                                    {subjects.length > 0 ? (
-                                                        subjects.map(s => (
-                                                            <SelectItem key={s.id} value={s.id} className="rounded-lg">
-                                                                {s.name}
-                                                            </SelectItem>
-                                                        ))
-                                                    ) : (
-                                                        <div className="p-2 text-sm text-muted-foreground text-center">No subjects found</div>
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="space-y-2">
                                             <Label htmlFor="title" className="text-slate-900 dark:text-slate-200 font-bold text-xs uppercase tracking-widest">{t('courseTitle')}</Label>
                                             <Input
                                                 id="title"
@@ -254,9 +217,12 @@ export default function CoursesPage() {
                     {filteredCourses.map((course) => (
                         <Card key={course.id} className="group overflow-hidden border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl flex flex-col h-full">
                             {/* Thumbnail Area */}
-                            <div className="aspect-video relative bg-slate-100 dark:bg-slate-800/50 overflow-hidden">
-                                <div className="flex items-center justify-center h-full text-slate-300 dark:text-slate-600">
-                                    <Sparkles className="h-10 w-10 opacity-50" />
+                            <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-indigo-700 via-primary to-cyan-600 p-4">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.25),transparent_45%),radial-gradient(circle_at_80%_80%,rgba(255,255,255,0.18),transparent_35%)]" />
+                                <div className="relative flex h-full items-center justify-center text-center">
+                                    <span className="text-white text-lg font-black leading-tight line-clamp-3 drop-shadow-sm">
+                                        {course.title}
+                                    </span>
                                 </div>
 
                                 <div className="absolute top-2 right-2 flex gap-1">
