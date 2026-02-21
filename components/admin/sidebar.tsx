@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/contexts/auth-context';
+import Image from 'next/image';
 
 const sidebarItems = [
     {
@@ -76,17 +77,14 @@ export function AdminSidebar({ className, onNavigate }: AdminSidebarProps) {
 
     return (
         <div className={cn("flex flex-col h-full bg-slate-950 text-white selection:bg-primary/30", className)}>
-            <div className="flex items-center px-6 border-b border-white/5 h-20 shadow-lg shadow-black/20">
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary p-2.5 rounded-2xl shadow-lg shadow-primary/20">
-                        <GraduationCap className="h-7 w-7 text-white" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-xl font-black tracking-tight text-white leading-none">Manal</span>
-                        <span className="text-[10px] font-bold text-primary tracking-widest uppercase mt-1">LMS Admin</span>
-                    </div>
-                </div>
-            </div>
+            <Link href={`/${locale}/admin`} className="flex items-center px-6 border-b border-white/5 h-20 shadow-lg shadow-black/20">
+                <Image
+                    src="/manal-logo.png"
+                    width={130}
+                    height={30}
+                    alt="Manal LMS Logo"
+                />
+            </Link>
 
             <div className="flex-1 overflow-y-auto py-8">
                 <nav className="space-y-2 px-4">
