@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, Layers, Search } from 'lucide-react';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,13 +22,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+
 import { catalogApi } from '@/lib/api/catalog';
 import { toast } from 'sonner';
 import { CatalogCard } from '@/components/admin/catalog/CatalogCard';
@@ -48,7 +42,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const subjectSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
-    majorId: z.string().uuid("Please select a major"),
 });
 
 type SubjectFormValues = z.infer<typeof subjectSchema>;
@@ -58,14 +51,9 @@ export default function SubjectsPage() {
     const tCommon = useTranslations('common');
     const router = useRouter();
     const params = useParams();
-    const searchParams = useSearchParams();
     const locale = params.locale as string;
     const queryClient = useQueryClient();
 
-    // Check if majorId is in query params for filtering
-    const majorIdParam = searchParams.get('majorId') || 'all';
-
-    const [filterMajorId, setFilterMajorId] = useState(majorIdParam);
     const [searchQuery, setSearchQuery] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -73,35 +61,25 @@ export default function SubjectsPage() {
         resolver: zodResolver(subjectSchema),
         defaultValues: {
             name: "",
-            majorId: majorIdParam !== 'all' ? majorIdParam : "",
         },
     });
 
-    // Fetch Majors (for dropdown) - always need all majors for filter dropdown
-    const { data: majors = [] } = useQuery({
-        queryKey: ['majors', 'all'],
-        queryFn: catalogApi.getAllMajors,
-        staleTime: 5 * 60 * 1000,
-    });
-
-    // Fetch Subjects (dependent on filter)
+    // Fetch Subjects
     const { data: subjects = [], isLoading } = useQuery({
-        queryKey: ['subjects', filterMajorId],
-        queryFn: () => filterMajorId !== 'all' && filterMajorId
-            ? catalogApi.getSubjects(filterMajorId)
-            : catalogApi.getAllSubjects(),
+        queryKey: ['subjects'],
+        queryFn: () => catalogApi.getAllSubjects(),
     });
 
     const createMutation = useMutation({
         mutationFn: catalogApi.createSubject,
         onSuccess: () => {
             toast.success(tCommon('create'));
-            form.reset({ majorId: filterMajorId !== 'all' ? filterMajorId : "", name: "" });
+            form.reset({ name: "" });
             setIsDialogOpen(false);
             queryClient.invalidateQueries({ queryKey: ['subjects'] });
         },
         onError: () => {
-            toast.error('Failed to create subject.');
+            toast.error('Failed to create course.');
         }
     });
 
@@ -111,7 +89,6 @@ export default function SubjectsPage() {
 
     const filteredSubjects = subjects.filter(s => {
         const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
-        // filterMajorId is handled by query, but double check if switching
         return matchesSearch;
     });
 
@@ -131,22 +108,11 @@ export default function SubjectsPage() {
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/40 dark:bg-slate-900/40 p-6 rounded-[2rem] border border-white dark:border-white/5 shadow-xl shadow-slate-200/50 dark:shadow-none backdrop-blur-md transition-colors duration-300">
                 <div className="space-y-1">
-                    <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">{t('subjectsTitle')}</h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium text-base">{t('subjectsDesc')}</p>
+                    <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">Courses</h2>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium text-base">Manage all courses in your catalog</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <Select value={filterMajorId} onValueChange={setFilterMajorId}>
-                        <SelectTrigger className="w-full md:w-56 h-11 rounded-xl bg-white/80 dark:bg-white/5 border-slate-200 dark:border-white/10 shadow-sm text-sm font-medium">
-                            <SelectValue placeholder={t('selectMajor')} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border-none shadow-2xl">
-                            <SelectItem value="all" className="text-sm">All Majors</SelectItem>
-                            {majors.map(major => (
-                                <SelectItem key={major.id} value={major.id} className="rounded-lg font-medium text-sm">{major.name}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
 
                     <div className="relative group w-full md:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 rtl:left-auto rtl:right-3 group-focus-within:text-primary transition-colors" />
@@ -161,44 +127,21 @@ export default function SubjectsPage() {
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                             <Button className="rounded-xl shadow-lg shadow-primary/20 px-6 font-bold h-11 text-base hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95">
-                                <Plus className="me-2 h-5 w-5" /> {t('addSubject')}
+                                <Plus className="me-2 h-5 w-5" /> Add Course
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[450px] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden bg-white dark:bg-slate-950">
                             <div className="bg-primary p-8 text-white relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                                <DialogTitle className="text-3xl font-black relative z-10">{t('addSubject')}</DialogTitle>
+                                <DialogTitle className="text-3xl font-black relative z-10">Add Course</DialogTitle>
                                 <DialogDescription className="text-primary-foreground/90 mt-2 font-bold text-base relative z-10">
-                                    Create a new subject area for course development.
+                                    Create a new course in your catalog.
                                 </DialogDescription>
                             </div>
                             <div className="p-8">
                                 <Form {...form}>
                                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                        <FormField
-                                            control={form.control}
-                                            name="majorId"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-slate-900 dark:text-slate-200 font-bold text-xs uppercase tracking-widest">{t('major')}</FormLabel>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                        <FormControl>
-                                                            <SelectTrigger className="rounded-xl h-12 border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-base font-medium">
-                                                                <SelectValue placeholder={t('selectMajor')} />
-                                                            </SelectTrigger>
-                                                        </FormControl>
-                                                        <SelectContent className="rounded-xl border-none shadow-2xl">
-                                                            {majors.map(major => (
-                                                                <SelectItem key={major.id} value={major.id} className="rounded-lg font-medium text-sm">
-                                                                    {major.name} ({major.university?.name})
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+
                                         <FormField
                                             control={form.control}
                                             name="name"
@@ -241,10 +184,8 @@ export default function SubjectsPage() {
                         <CatalogCard
                             key={subject.id}
                             title={subject.name}
-                            tag={subject.major?.name}
-                            description={subject.major?.university?.name}
                             count={subject._count?.courses || 0}
-                            countLabel={t('coursesCount')}
+                            countLabel="Courses"
                             onManage={() => router.push(`/${locale}/admin/courses?subjectId=${subject.id}`)}
                             icon={<Layers className="h-8 w-8 text-primary/60" />}
                         />
