@@ -173,7 +173,7 @@
         "saving": "Saving Changes...",
         "form": {
             "title": "Title",
-            "price": "Price (\u20C1)",
+            "price": "Price (SAR)",
             "description": "Description",
             "descriptionPlaceholder": "Describe your course..."
         }

@@ -513,7 +513,7 @@ export default function PendingPurchasesPage() {
                         </div>
                         {selectedEnrollment?.ledger.price === 0 && (
                             <div className="col-span-4 text-center p-2 bg-blue-50 text-blue-700 text-xs rounded-lg mt-2 font-medium">
-                                This is a free course (\u20C1 0). Confirm with \u20C1 0 to grant access.
+                                This is a free course (SAR 0). Confirm with SAR 0 to grant access.
                             </div>
                         )}
                     </div>
@@ -589,7 +589,7 @@ export default function PendingPurchasesPage() {
                             </h4>
                             {editingEnrollment?.ledger.price === 0 && (
                                 <div className="text-center p-2 bg-blue-50 text-blue-700 text-xs rounded-lg mb-2 font-medium">
-                                    Free Course: Only \u20C1 0 adjustments allowed.
+                                    Free Course: Only SAR 0 adjustments allowed.
                                 </div>
                             )}
                             <div className="flex gap-3 items-end">

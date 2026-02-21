@@ -21,22 +21,29 @@ export function DashboardHeader({ totalRevenue, userName = "Admin" }: DashboardH
         else if (hour < 18) setGreeting('GoodAfternoon');
         else setGreeting('GoodEvening');
 
-        // Animate count up
-        const duration = 2000;
-        const steps = 60;
-        const stepValue = totalRevenue / steps;
-        let current = 0;
-        const timer = setInterval(() => {
-            current += stepValue;
-            if (current >= totalRevenue) {
-                setDisplayRevenue(totalRevenue);
-                clearInterval(timer);
-            } else {
-                setDisplayRevenue(current);
-            }
-        }, duration / steps);
+        // Smoother requestAnimationFrame counter to avoid jumpy glyph rendering.
+        const duration = 1400;
+        const startValue = 0;
+        const startTime = performance.now();
+        let frameId = 0;
 
-        return () => clearInterval(timer);
+        const animate = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const nextValue = startValue + (totalRevenue - startValue) * eased;
+            setDisplayRevenue(Math.round(nextValue));
+
+            if (progress < 1) {
+                frameId = requestAnimationFrame(animate);
+            } else {
+                setDisplayRevenue(totalRevenue);
+            }
+        };
+
+        frameId = requestAnimationFrame(animate);
+
+        return () => cancelAnimationFrame(frameId);
     }, [totalRevenue]);
 
     return (
@@ -63,7 +70,7 @@ export function DashboardHeader({ totalRevenue, userName = "Admin" }: DashboardH
                     <span className="block text-slate-300 text-xs font-bold uppercase tracking-widest mb-1">
                         {t('totalRevenue', { defaultMessage: 'Total Revenue' })}
                     </span>
-                    <div className="text-4xl font-black text-amber-400 font-mono tracking-tight">
+                    <div dir="ltr" className="text-4xl font-black text-amber-400 tabular-nums tracking-tight">
                         {formatPrice(displayRevenue)}
                     </div>
                 </div>
