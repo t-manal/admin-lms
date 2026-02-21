@@ -91,7 +91,7 @@ export const catalogApi = {
         return apiClient.post<Major>('/catalog/majors', data);
     },
 
-    createSubject: async (data: { name: string; majorId: string }) => {
+    createSubject: async (data: { name: string; majorId?: string }) => {
         return apiClient.post<Subject>('/catalog/subjects', data);
     },
 
