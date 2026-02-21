@@ -33,8 +33,8 @@ const sidebarItems = [
         icon: Library,
         href: '/admin/catalog',
         submenu: [
+            { titleKey: 'courses', href: '/admin/courses', icon: BookOpen },
             { titleKey: 'universities', href: '/admin/catalog/universities', icon: University },
-            { titleKey: 'subjects', href: '/admin/courses', icon: BookOpen },
         ]
     },
     // Courses tab removed - course management accessed via Universities (V2)
