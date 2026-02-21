@@ -22,12 +22,14 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { formatPrice, withLatinDigits } from '@/lib/utils';
 
 
 export default function CourseStudentsPage() {
     const t = useTranslations('admin.courses.students');
     const params = useParams();
     const router = useRouter();
+    const locale = params.locale as string;
     const courseId = params.courseId as string;
     const [students, setStudents] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +39,6 @@ export default function CourseStudentsPage() {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                setIsLoading(true);
                 setIsLoading(true);
                 // Use the dedicated endpoint for course students (no pagination yet, but safer than filtering global list)
                 const courseStudents = await instructorApi.getCourseStudents(courseId);
@@ -116,26 +117,36 @@ export default function CourseStudentsPage() {
                                 <TableRow>
                                     <TableHead>{t('table.student')}</TableHead>
                                     <TableHead>{t('table.email')}</TableHead>
+                                    <TableHead>{t('table.phone')}</TableHead>
+                                    <TableHead>{t('table.paid')}</TableHead>
+                                    <TableHead>{t('table.remaining')}</TableHead>
                                     <TableHead>{t('table.joined')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {students.map((student) => (
-                                    <TableRow key={student.id} onClick={() => router.push(`/admin/students/${student.id}`)} className="cursor-pointer hover:bg-muted/50">
+                                    <TableRow key={student.id} onClick={() => router.push(`/${locale}/admin/students/${student.id}`)} className="cursor-pointer hover:bg-muted/50">
                                         <TableCell className="flex items-center gap-3">
                                             <Avatar>
-                                                <AvatarImage src={student.profilePicture} />
+                                                <AvatarImage src={student.avatar || student.profilePicture} />
                                                 <AvatarFallback><User /></AvatarFallback>
                                             </Avatar>
                                             <div className="font-medium">{student.firstName} {student.lastName}</div>
                                         </TableCell>
                                         <TableCell>{student.email}</TableCell>
-                                        <TableCell>-</TableCell>
+                                        <TableCell>{student.phoneNumber || student.phone || '-'}</TableCell>
+                                        <TableCell>{formatPrice(student.payment?.paidAmount || 0)}</TableCell>
+                                        <TableCell>{formatPrice(student.payment?.remaining || 0)}</TableCell>
+                                        <TableCell>
+                                            {student.enrolledAt
+                                                ? new Date(student.enrolledAt).toLocaleDateString(withLatinDigits())
+                                                : '-'}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                                 {students.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+                                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                                             {t('table.noStudents')}
                                         </TableCell>
                                     </TableRow>

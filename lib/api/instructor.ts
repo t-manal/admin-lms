@@ -160,8 +160,18 @@ export interface Student {
     firstName?: string;
     lastName?: string;
     phone?: string;
+    phoneNumber?: string;
     avatar?: string;
     createdAt: string;
+    enrollmentId?: string;
+    enrollmentStatus?: string;
+    enrolledAt?: string;
+    payment?: {
+        price: number;
+        paidAmount: number;
+        remaining: number;
+        paymentState: 'UNPAID' | 'PARTIALLY_PAID' | 'FULLY_PAID';
+    };
     enrollments?: Array<{
         id: string;
         courseId: string;

@@ -275,7 +275,7 @@ export default function CoursesPage() {
                             <CardContent className="p-4 flex-1 flex flex-col gap-2">
                                 <div className="space-y-1">
                                     <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider flex items-center gap-1">
-                                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-sm">{course.subject?.major?.university?.name || "Unknown Uni"}</span>
+                                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-sm">{course.university?.name || "Unknown Uni"}</span>
                                     </div>
                                     <h3 className="text-base font-black tracking-tight text-slate-900 dark:text-white line-clamp-1 group-hover:text-primary transition-colors">
                                         {course.title}

@@ -189,6 +189,9 @@
         "table": {
             "student": "Student",
             "email": "Email",
+            "phone": "Phone",
+            "paid": "Paid",
+            "remaining": "Remaining",
             "joined": "Joined",
             "noStudents": "No students enrolled in this course yet."
         }
