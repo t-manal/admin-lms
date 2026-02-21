@@ -10,6 +10,7 @@ import { GraduationCap, BookOpen, Trophy, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { withLatinDigits } from '@/lib/utils';
 
 export default function StudentDashboard() {
     const [courses, setCourses] = useState<any[]>([]);
@@ -117,7 +118,7 @@ export default function StudentDashboard() {
                                 </div>
                                 <div className="min-w-0">
                                     <h4 className="font-medium text-sm truncate">{cert.course.title}</h4>
-                                    <p className="text-xs text-slate-500">Issued on {new Date(cert.issuedAt).toLocaleDateString()}</p>
+                                    <p className="text-xs text-slate-500">Issued on {new Date(cert.issuedAt).toLocaleDateString(withLatinDigits())}</p>
                                 </div>
                             </div>
                         ))}

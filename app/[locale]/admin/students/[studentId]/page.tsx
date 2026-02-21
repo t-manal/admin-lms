@@ -14,6 +14,7 @@ import { adminLocksApi } from '@/lib/api/admin-locks';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { withLatinDigits } from '@/lib/utils';
 
 export default function StudentDetailPage() {
     const params = useParams();
@@ -85,7 +86,7 @@ export default function StudentDetailPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
-                            <span>Joined {new Date(student.createdAt).toLocaleDateString()}</span>
+                            <span>Joined {new Date(student.createdAt).toLocaleDateString(withLatinDigits())}</span>
                         </div>
                     </div>
                 </div>
@@ -119,7 +120,7 @@ export default function StudentDetailPage() {
                                     <div className="flex items-start justify-between">
                                         <div className="space-y-1">
                                             <CardTitle className="text-xl font-bold text-[#1e40af]">{course.title}</CardTitle>
-                                            <CardDescription>Enrolled on {new Date(enrollment.enrolledAt).toLocaleDateString()}</CardDescription>
+                                            <CardDescription>Enrolled on {new Date(enrollment.enrolledAt).toLocaleDateString(withLatinDigits())}</CardDescription>
                                         </div>
                                         <Badge className={enrollment.status === 'ACTIVE' ? 'bg-green-500' : 'bg-slate-400'}>
                                             {enrollment.status}

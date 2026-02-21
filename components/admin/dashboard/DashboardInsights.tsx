@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Trophy, UserCheck, Flame, Loader2 } from 'lucide-react';
 import { insightsApi, type DashboardInsights as DashboardInsightsData } from '@/lib/api/insights';
+import { withLatinDigits } from '@/lib/utils';
 
 export function DashboardInsights() {
     const t = useTranslations('admin.dashboard');
@@ -30,7 +31,7 @@ export function DashboardInsights() {
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, {
+        return date.toLocaleDateString(withLatinDigits(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'

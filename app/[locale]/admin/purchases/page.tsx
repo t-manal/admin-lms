@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financeApi } from '@/lib/api/finance';
 import { Loader2, CheckCircle, Clock, User, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, withLatinDigits } from '@/lib/utils';
 
 export default function PendingPurchasesPage() {
     const queryClient = useQueryClient();
@@ -64,8 +64,8 @@ export default function PendingPurchasesPage() {
                                     </div>
                                     <div className="flex items-center gap-2 text-xs text-slate-400 mt-2">
                                         <Clock className="h-3 w-3" />
-                                        {new Date(enrollment.enrolledAt).toLocaleDateString('ar-SA')} 
-                                        ({new Date(enrollment.enrolledAt).toLocaleTimeString('ar-SA')})
+                                        {new Date(enrollment.enrolledAt).toLocaleDateString(withLatinDigits('ar-SA'))} 
+                                        ({new Date(enrollment.enrolledAt).toLocaleTimeString(withLatinDigits('ar-SA'))})
                                     </div>
                                 </div>
 

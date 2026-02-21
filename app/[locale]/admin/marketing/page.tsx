@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, Banknote, TrendingUp, Users, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, withLatinDigits } from '@/lib/utils';
 
 export default function MarketingPage() {
     const [payments, setPayments] = useState<PaymentRecord[]>([]);
@@ -161,7 +161,7 @@ export default function MarketingPage() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                {new Date(payment.createdAt).toLocaleDateString()}
+                                                {new Date(payment.createdAt).toLocaleDateString(withLatinDigits())}
                                             </TableCell>
                                         </TableRow>
                                     ))

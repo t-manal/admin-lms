@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { withLatinDigits } from '@/lib/utils';
 
 export default function CommunicationsPage() {
     const [tickets, setTickets] = useState<any[]>([]);
@@ -133,7 +134,7 @@ export default function CommunicationsPage() {
                                                 {ticket.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>{new Date(ticket.updatedAt).toLocaleDateString()}</TableCell>
+                                        <TableCell>{new Date(ticket.updatedAt).toLocaleDateString(withLatinDigits())}</TableCell>
                                         <TableCell className="text-right">
                                             <Button size="sm" variant="outline" onClick={() => handleOpenTicket(ticket)}>
                                                 <MessageCircle className="h-4 w-4 mr-2" /> View
@@ -164,7 +165,7 @@ export default function CommunicationsPage() {
                                     <p className="text-sm">{msg.content}</p>
                                 </div>
                                 <span className="text-[10px] text-muted-foreground mt-1">
-                                    {new Date(msg.createdAt).toLocaleString()}
+                                    {new Date(msg.createdAt).toLocaleString(withLatinDigits())}
                                 </span>
                             </div>
                         ))}
