@@ -31,9 +31,12 @@ function supportsRiyalSymbol() {
   }
 
   try {
+    const SIZE = 40;
     const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    if (!context) {
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) {
       supportsRiyalSymbolCache = false;
       return supportsRiyalSymbolCache;
     }
@@ -41,16 +44,31 @@ function supportsRiyalSymbol() {
     const bodyFont = document.body
       ? window.getComputedStyle(document.body).font
       : '16px sans-serif';
+    ctx.font = bodyFont || '16px sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000';
 
-    context.font = bodyFont || '16px sans-serif';
-    const symbolWidth = context.measureText(RIYAL_SYMBOL).width;
-    const replacementWidth = context.measureText('\uFFFD').width;
-    const emptyBoxWidth = context.measureText('\u25A1').width;
+    // Draw the Riyal symbol
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.fillText(RIYAL_SYMBOL, 4, SIZE / 2);
+    const riyalPixels = ctx.getImageData(0, 0, SIZE, SIZE).data;
 
-    supportsRiyalSymbolCache =
-      symbolWidth > 0 &&
-      symbolWidth !== replacementWidth &&
-      symbolWidth !== emptyBoxWidth;
+    // Draw a known-unsupported codepoint (unassigned in Unicode)
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    ctx.fillText('\u0378', 4, SIZE / 2);
+    const unsupportedPixels = ctx.getImageData(0, 0, SIZE, SIZE).data;
+
+    // Compare pixel data — if identical, the Riyal rendered as the same
+    // fallback glyph (tofu box) as the unsupported character
+    let identical = true;
+    for (let i = 0; i < riyalPixels.length; i++) {
+      if (riyalPixels[i] !== unsupportedPixels[i]) {
+        identical = false;
+        break;
+      }
+    }
+
+    supportsRiyalSymbolCache = !identical;
   } catch {
     supportsRiyalSymbolCache = false;
   }
