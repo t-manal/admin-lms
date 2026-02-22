@@ -5,9 +5,9 @@ export const metadata: Metadata = {
   title: 'Manal Admin',
   description: 'Admin Dashboard',
   icons: {
-    icon: '/Manal Alhihi Logo (1).webp',
-    shortcut: '/Manal Alhihi Logo (1).webp',
-    apple: '/Manal Alhihi Logo (1).webp',
+    icon: '/favicon.webp',
+    shortcut: '/favicon.webp',
+    apple: '/favicon.webp',
   },
 };
 
