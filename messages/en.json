@@ -31,7 +31,7 @@
       "courses": "Courses",
       "students": "Students",
 
-      "purchases": "Payment Follow-up",
+      "purchases": "Payment Management",
       "analytics": "Analytics",
       "settings": "Settings",
       "logout": "Logout"
@@ -250,7 +250,7 @@
       "noRevenue14Days": "No revenue in last 14 days"
     },
     "purchases": {
-      "title": "Payment Follow-up",
+      "title": "Payment Management",
       "subtitle": "Manage pending enrollment requests (Manual Payment)",
       "student": "Student",
       "course": "Course",
