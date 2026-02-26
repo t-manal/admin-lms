@@ -235,6 +235,8 @@
             "addStudent": "الطلاب",
             "quickLaunchpad": "الوصول السريع",
             "systemHealth": "حالة النظام",
+            "paymentCenter": "مركز المدفوعات",
+            "paymentCenterDesc": "مراجعة الطلبات المعلقة",
             "revenue": "الإيرادات",
             "revenueIndex": "مؤشر الإيرادات",
             "insights": "إحصائيات",

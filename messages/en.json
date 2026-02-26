@@ -235,6 +235,8 @@
       "addStudent": "Students",
       "quickLaunchpad": "Quick Launchpad",
       "systemHealth": "System Health",
+      "paymentCenter": "Payment Center",
+      "paymentCenterDesc": "Review pending payments",
       "revenue": "Revenue",
       "revenueIndex": "Revenue Index",
       "insights": "Insights",
