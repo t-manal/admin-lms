@@ -73,14 +73,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setUser(userData);
             authSuccess = true;
+            // Set session hint cookie for middleware
+            document.cookie = 'isLoggedIn=true; path=/; SameSite=Lax';
           } catch {
             setUser(null);
             apiClient.clearAccessToken();
+            // Clear session hint cookie on RBAC failure
+            document.cookie = 'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
           }
         }
       } catch {
         apiClient.markRefreshFailed();
         setUser(null);
+        // Clear session hint cookie
+        document.cookie = 'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       }
       
       setIsLoading(false);
@@ -116,6 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         apiClient.setAccessToken(data.accessToken);
         apiClient.resetRefreshState();
         setUser(data.user);
+        // Set session hint cookie for middleware
+        document.cookie = 'isLoggedIn=true; path=/; SameSite=Lax';
         
         // 4. Resolve (Let generic page component handle redirect)
         setIsLoading(false);
@@ -137,6 +145,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Immediately clear client state
     apiClient.clearAccessToken();
     setUser(null);
+    // Clear session hint cookie
+    document.cookie = 'isLoggedIn=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
     // Get locale from window location as fallback or path
     const pathSegments = window.location.pathname.split('/');
