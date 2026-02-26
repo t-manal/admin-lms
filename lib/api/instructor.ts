@@ -332,7 +332,7 @@ export const instructorApi = {
     // ========================================================================
 
     /**
-     * Standard PDF upload (small files < 10MB)
+     * Standard document upload (supported up to backend direct-upload limit, currently 100MB)
      */
     uploadPdf: async (partId: string, file: File, isSecure: boolean = true): Promise<{ storageKey: string }> => {
         const formData = new FormData();
@@ -342,7 +342,7 @@ export const instructorApi = {
     },
 
     /**
-     * PERFORMANCE: Chunked upload for large files (> 10MB)
+     * PERFORMANCE: Chunked upload for very large files or unstable networks
      * Splits file into 5MB chunks for reliable uploads
      */
     uploadFileChunked: async (

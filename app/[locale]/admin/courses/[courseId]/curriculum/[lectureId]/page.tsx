@@ -15,6 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslations } from 'next-intl';
 
+const MAX_DOCUMENT_SIZE = 100 * 1024 * 1024; // 100MB
+
 export default function PartEditorPage() {
     const t = useTranslations('admin.curriculum');
     const params = useParams();
@@ -125,6 +127,10 @@ export default function PartEditorPage() {
 
     const handleUploadPdf = async (file: File) => {
         if (!file) return;
+        if (file.size > MAX_DOCUMENT_SIZE) {
+            toast.error('Maximum document size is 100MB');
+            return;
+        }
         try {
             setIsUploading(true);
             await instructorApi.uploadPdf(partId, file, isSecure);
@@ -256,7 +262,7 @@ export default function PartEditorPage() {
                                         </Button>
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        Supports PDF, Word, PPTX, Text
+                                        Supports PDF, Word, PPTX, Text (max 100MB)
                                     </p>
                                 </TabsContent>
                                 <TabsContent value="text" className="space-y-2">
