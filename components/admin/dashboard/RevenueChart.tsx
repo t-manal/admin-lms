@@ -2,8 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { PaymentRecord } from '@/lib/api/finance';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { useMemo } from 'react';
 import { format, subDays, startOfDay, isSameDay } from 'date-fns';
 import { formatPrice } from '@/lib/utils';
@@ -44,10 +43,7 @@ export function RevenueChart({ series }: RevenueChartProps) {
         return filledData;
     }, [series]);
 
-    const hasRevenue = useMemo(() => {
-        if (!series || series.length === 0) return false;
-        return series.some(s => s.amount > 0);
-    }, [series]);
+    const hasRevenue = useMemo(() => chartData.some(d => d.revenue > 0), [chartData]);
 
     return (
         <Card className="col-span-1 lg:col-span-2 overflow-hidden border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2rem] shadow-xl">
@@ -60,53 +56,48 @@ export function RevenueChart({ series }: RevenueChartProps) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-                <div className="h-[300px] w-full mt-4 flex items-center justify-center">
-                    {(!series || series.length === 0) ? (
-                        <div className="text-slate-400 dark:text-slate-500 font-medium text-sm">
-                            {t('noData', { defaultMessage: 'No time-series data available' })}
-                        </div>
-                    ) : !hasRevenue ? (
-                         <div className="text-slate-400 dark:text-slate-500 font-medium text-sm">
-                            {t('noRevenue14Days', { defaultMessage: 'No revenue in last 14 days' })}
-                        </div>
-                    ) : (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis
-                                    dataKey="displayDate"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 10, fill: '#94a3b8' }}
-                                    dy={10}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'rgba(255,255,255,0.8)',
-                                        borderRadius: '12px',
-                                        border: 'none',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                    itemStyle={{ color: '#1e40af', fontWeight: 'bold' }}
-                                    formatter={(value: number) => [formatPrice(value), 'Revenue']}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="revenue"
-                                    stroke="#3b82f6"
-                                    strokeWidth={4}
-                                    fillOpacity={1}
-                                    fill="url(#colorRevenue)"
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    )}
+                <div className="h-[300px] w-full mt-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <XAxis
+                                dataKey="displayDate"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                dy={10}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'rgba(255,255,255,0.8)',
+                                    borderRadius: '12px',
+                                    border: 'none',
+                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                }}
+                                itemStyle={{ color: '#1e40af', fontWeight: 'bold' }}
+                                formatter={(value: number) => [formatPrice(value), 'Revenue']}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="revenue"
+                                stroke="#3b82f6"
+                                strokeWidth={4}
+                                fillOpacity={1}
+                                fill="url(#colorRevenue)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
+                {!hasRevenue && (
+                    <div className="pb-4 text-center text-slate-400 dark:text-slate-500 font-medium text-sm">
+                        {t('noRevenue14Days', { defaultMessage: 'No revenue in last 14 days' })}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
