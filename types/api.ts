@@ -16,6 +16,7 @@ export interface User {
   role: UserRole;
   bio?: string | null;
   phone?: string;
+  phoneNumber?: string;
   createdAt: string;
   updatedAt: string;
 }

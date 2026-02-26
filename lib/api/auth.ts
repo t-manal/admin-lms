@@ -18,7 +18,7 @@ export const authApi = {
     return apiClient.get<User>('/auth/me');
   },
 
-  updateProfile: async (data: { firstName: string; lastName: string; phone?: string; bio?: string }) => {
+  updateProfile: async (data: { firstName: string; lastName: string; phoneNumber?: string; bio?: string }) => {
     return apiClient.put<User>('/auth/profile', data);
   },
 
@@ -32,5 +32,4 @@ export const authApi = {
     return apiClient.post<{ url: string }>('/users/me/avatar', formData);
   },
 };
-
 
