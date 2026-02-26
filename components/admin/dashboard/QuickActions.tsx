@@ -2,13 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
-import { TicketPercent, Award, UserPlus, Activity, ChevronRight } from 'lucide-react';
+import { UserPlus, Activity } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export function QuickActions() {
     const t = useTranslations('admin.dashboard');
-    const router = useRouter();
 
     const actions = [
 
@@ -22,7 +20,7 @@ export function QuickActions() {
         {
             label: t('systemHealth', { defaultMessage: 'System Health' }),
             icon: Activity,
-            href: '#', // Static for now
+            href: '/admin/purchases/pending',
             color: 'text-emerald-500',
             bg: 'bg-emerald-50 dark:bg-emerald-950/20'
         }
