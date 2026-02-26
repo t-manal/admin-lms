@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Manal Admin',
-  description: 'Admin Dashboard',
+  metadataBase: new URL('https://admin.manalalhihi.com'),
+  title: 'T.MANAL ALHIHI',
+  description: 'Educational Platform',
+  applicationName: 'T.MANAL LMS',
+  authors: [{ name: 'INKSPIRE' }],
+  creator: 'INKSPIRE',
+  publisher: 'INKSPIRE',
   icons: {
     icon: '/favicon.webp',
     shortcut: '/favicon.webp',
